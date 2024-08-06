@@ -1,4 +1,5 @@
 let exportTable = undefined;
+let csvFilename = null;
 
 function fetchDataV1() {
 
@@ -18,6 +19,10 @@ function fetchDataV1() {
     
     t = document.getElementById("req_message");
     t.style.visibility = 'hidden'
+
+    t = document.getElementById("exportToCsv");
+    t.disabled = true;
+
     
 
     //t = document.getElementById("api_url");
@@ -132,9 +137,12 @@ function fetchDataV1() {
 
         t = document.getElementById("num_table_entries");
         t.innerHTML = table.rows.length - 1;
-        const fileName = `${origKey}_${interval}_period_${startDate}_${endDate}.csv`
-        delete exportTable;
-        exportTable = export_to_csv(fileName);
+        csvFilename = `${origKey}_${interval}_period_${startDate}_${endDate}.csv`
+
+        t = document.getElementById("exportToCsv");
+        t.disabled = false;
+        //delete exportTable;
+        //exportTable = export_to_csv(fileName);
 
     })
     .catch(error => {
@@ -155,7 +163,7 @@ function fetchDataV1() {
         t.style.visibility = 'visible'
 
         t = document.getElementById("num_table_entries");
-        t.innerHTML = table.rows.length - 1;
+        t.innerHTML = table.rows.length;
         t.style.visibility = 'visible'
     });
     
@@ -192,8 +200,27 @@ function validateEndDate(startDate, endDate) {
 
 function export_to_csv(csvFileName) {
     table = document.getElementById("candle_table");
-    return window.tableexport.TableExport(table, csvFileName)
+    instance = window.tableexport.TableExport(table, csvFileName)
+    blob = window.tableexport.Blob(instance.getExportData()['candle_table']['csv']['data'])
+    const url = URL.createObjectURL(blob);
+    
+    // Create an anchor tag for downloading
+    const a = document.createElement('a');
+    
+    // Set the URL and download attribute of the anchor tag
+    a.href = url;
+    a.download = csvFileName;
+    
+    // Trigger the download by clicking the anchor tag
+    a.click();
+}
+
+function handleExportToCSV() {
+    export_to_csv(csvFilename);
 }
 
 fetchBtn = document.getElementById("fetch_btn");
 fetchBtn.addEventListener("click", fetchDataV1);
+
+exportCsvBtn = document.getElementById("exportToCsv");
+exportCsvBtn.addEventListener("click", handleExportToCSV)
