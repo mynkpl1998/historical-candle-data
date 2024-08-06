@@ -1,0 +1,20 @@
+.horizontal-divider {
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
+#parameters_row {
+    padding-top: 20px;
+}
+
+#form_validation_text_row {
+    color: red;
+}
+
+#api_endpoint_text, #status_code_text {
+    visibility: hidden;
+}
+
+.table-responsive {
+    max-height:300px;
+}
